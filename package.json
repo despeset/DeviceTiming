@@ -1,0 +1,30 @@
+{
+  "name": "DeviceTiming",
+  "version": "0.1.0",
+  "description": "Instrument your javascript to measure parse & execution time on any device or browser",
+  "main": "devicetiming",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:etsy/DeviceTiming"
+  },
+  "bin": {
+    "devicetiming": "./devicetiming"
+  },
+  "dependencies": {
+    "minimist": "~1.1.0",
+    "js-string-escape": "~1.0.0"
+  },
+  "keywords": [
+    "performance",
+    "mobile",
+    "timing",
+    "instrumentation",
+    "tool",
+    "testing"
+  ],
+  "author": "Daniel Espeset <desp@etsy.com>",
+  "license": "MIT"
+}

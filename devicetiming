@@ -1,0 +1,180 @@
+#!/usr/bin/env node
+
+/**
+ * This script exposes the command line interface for the different components
+ * that make up the devicetiming tool. It is responsible for handling command
+ * line arguments, validating them and passing them through to the different
+ * core modules `server`, `instrument` and `report`.
+ *
+ * To instrument /path/to/js and start a server at http://foo.example.com:8080
+ *
+ *      devicetiming server -p 8080 -n foo.example.com /path/to/js
+ *
+ * See usage for more.
+ *
+ * @author    Daniel Espeset <desp@etsy.com>
+ * @copyright (c) 2014 Etsy, Inc.
+ **/
+
+var argv = require('minimist')(process.argv.slice(2)),
+      fs = require('fs'),
+readline = require('readline'),
+    path = require('path');
+
+function usage() {
+    process.stdout.write([
+       "DeviceTiming is a tool for profiling parse and execute times of JS files on pageload.",
+       "",
+       "Usage:",
+       "       devicetiming <command> [args] ",
+       "",
+       "The commands are:",
+       "",
+       "    server [-p port -n hostname] /path/to/js/src      start the devicetiming server, if port is not specified default is 8385",
+       "    instrument [-n hostname] /path/to/js/src          add the timing instrumentation to the js code, idempotent",
+       "    report /path/to/results.json /path/to/output      generate the static HTML report",
+    ].join("\n"));
+}
+
+// Confirmation message before altering javascript files
+function dangerMessage(targetFiles, targetPath) {
+    return ['This will permanently mangle the '+targetFiles.length+' javascript files in '+targetPath+'.',
+            'Are you sure you want to continue? [Y/N]'].join("\n");
+}
+
+// Print an error message then quit
+function errorExit(msg, exitcode) {
+    process.stderr.write(msg);
+    process.exit(exitcode);
+}
+
+// Print an error message, the usage, then quit
+function usageExit(msg, exitcode) {
+    process.stderr.write(msg+"\n");
+    usage();
+    process.exit(exitcode);
+}
+
+// Initialize readline, used for confirmation prompting
+var rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+});
+
+// Prompt user with yes or no question in msg, calls fn with answer boolean
+function confirm(msg, fn) {
+    rl.question(msg, function(answer) {
+        if (!answer.match(/^([yn]|yes|no)$/i)) {
+            process.stdout.write("\nInvaid input, must enter Y for 'yes, contine' or N for 'no, cancel'\n");
+            return confirm(msg, fn);
+        }
+        fn(answer[0].toLowerCase() === 'y');
+    });
+}
+
+// Recursively traverse dirpath, callbacks provides dir and / or file handlers
+function recurseDir(dirpath, callbacks) {
+    fs.readdirSync(dirpath).forEach(function(f) {
+        if (fs.lstatSync(path.resolve(dirpath, f)).isDirectory()) {
+            callbacks.dir && callbacks.dir(dirpath, f);
+            return recurseDir(path.resolve(dirpath, f), callbacks);
+        }
+        callbacks.file && callbacks.file(dirpath, f);
+    });
+}
+
+// Validates and returns path of directory to instrument
+function getTargetPath(args) {
+    if (args._.length < 2) {
+        return errorExit('You must specify a javascript folder to instrument', 1);
+    }
+
+    var targetPath = path.resolve(args._[1]);
+    if (!fs.existsSync(targetPath)) {
+        return errorExit(targetPath + ' does not exist.', 1);
+    }
+    return targetPath;
+}
+
+// Handlers to dispatch <command> to in: `devicetiming <command> [args]`
+var commands = {
+
+    // Instrument the target directory, then launch the server
+    server: function(args) {
+        this.instrument(args, function(){
+            console.log("\nDone, launching server");
+            require(path.resolve(__dirname, 'server')).start(args);
+        });
+    },
+
+    // Confirm, then instrument the target directory and call done (if provided)
+    instrument: function(args, done) {
+        var targetPath = getTargetPath(args);
+        // Find all .js files in the targetPath
+        var targetFiles = [];
+        recurseDir(targetPath, {
+            file: function(d, f) {
+                if (f.substr(-3) === '.js') { targetFiles.push(path.resolve(d, f)); }
+            }
+        });
+	function overwriteThenStartServer(yes) {
+            if (!yes) {
+                return errorExit('Aborted instrumentation, maybe prepare a backup and try again?', 1);
+            }
+            console.log("Adding instrumentation to " + targetPath);
+            require(path.resolve(__dirname, 'instrument')).rewriteTargetFiles(targetFiles, targetPath, args.n || args.hostname, args.p || args.port);
+            done && done();
+        }
+	if (args.f || args.force) {
+	    return overwriteThenStartServer(true);
+	}
+        // Ask "are you for seriously?" then add instrumentation
+        confirm(dangerMessage(targetFiles, targetPath), overwriteThenStartServer); 
+    },
+
+    // Generate a static report from a results.json file
+    report: function(args) {
+        args._.length < 4 && usageExit("Report generator requires a results.json file and an output path",1);
+        try {
+            var results = JSON.parse(fs.readFileSync(path.resolve(args._[1])));
+        } catch (e) {
+            errorExit("Error trying to load JSON file.\n"+e, 1);
+        }
+        // Quick 'n dirty mkdir -p implementation for output path
+        var outputPath = path.resolve(args._[2]);
+        if (!fs.existsSync(outputPath)) {
+            outputPath.split(path.sep).forEach(function(part, i){
+                var p = outputPath.split(path.sep);
+                p.splice(i);
+                if (!fs.existsSync(path.resolve(p, part))) {
+                    fs.mkdirSync(path.resolve(p, part));
+                }
+            });
+        }
+        require(path.resolve(__dirname, 'report')).writeReport(results, outputPath);
+    },
+
+    // I need somebody
+    help: function(args) {
+        usageExit('', 0);
+    }
+};
+
+// If called with -h or --help, print usage and quit
+if (argv.h || argv.help) {
+    usageExit('', 0);
+}
+
+// If called without a command specified, print usage and quit
+if (argv._.length < 1) {
+    usageExit('No action passed, not sure what to do -- please see usage:', 1);
+}
+
+// If command not understood, print usage and quit
+var cmd = argv._[0];
+if (!commands[cmd]) {
+    usageExit('Not a valid command: '+cmd, 1);
+}
+
+// Execute command
+commands[cmd](argv);
