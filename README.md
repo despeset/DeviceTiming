@@ -28,7 +28,7 @@ Then start the DeviceTiming server and provide a path to the javascript you wish
 ./devicetiming server /path/to/your/js
 ```
 This will first recursively instrument all the code in the path provided.
-Then it will start listening at port 8532 for beacons from the client code.
+Then it will start listening at port 8537 for beacons from the client code.
 You can provide a differnt port with `-p`, see `devicetiming -h` for more.
 
 When you're done you can restore your backed up copy:

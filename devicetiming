@@ -30,7 +30,7 @@ function usage() {
        "",
        "The commands are:",
        "",
-       "    server [-p port -n hostname] /path/to/js/src      start the devicetiming server, if port is not specified default is 8385",
+       "    server [-p port -n hostname] /path/to/js/src      start the devicetiming server, if port is not specified default is 8537",
        "    instrument [-n hostname] /path/to/js/src          add the timing instrumentation to the js code, idempotent",
        "    report /path/to/results.json /path/to/output      generate the static HTML report",
     ].join("\n"));
