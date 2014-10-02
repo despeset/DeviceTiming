@@ -10,7 +10,8 @@
  * @copyright (c) 2014 Etsy, Inc.
  **/
 
-var fs      = require('fs');
+var fs      = require('fs'),
+    path    = require('path');
 
 function uniqueSort(arr){
     return arr.reverse()

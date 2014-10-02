@@ -134,7 +134,7 @@ var commands = {
 
     // Generate a static report from a results.json file
     report: function(args) {
-        args._.length < 4 && usageExit("Report generator requires a results.json file and an output path",1);
+        args._.length < 3 && usageExit("Report generator requires a results.json file and an output path",1);
         try {
             var results = JSON.parse(fs.readFileSync(path.resolve(args._[1])));
         } catch (e) {
@@ -151,7 +151,8 @@ var commands = {
                 }
             });
         }
-        require(path.resolve(__dirname, 'report')).writeReport(results, outputPath);
+        require(path.resolve(__dirname, 'report')).outputReport(results, outputPath);
+        process.exit(0);
     },
 
     // I need somebody
