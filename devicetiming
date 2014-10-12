@@ -21,6 +21,7 @@ var argv = require('minimist')(process.argv.slice(2)),
 readline = require('readline'),
     path = require('path');
 
+
 function usage() {
     process.stdout.write([
        "DeviceTiming is a tool for profiling parse and execute times of JS files on pageload.",
@@ -103,7 +104,7 @@ var commands = {
     server: function(args) {
         this.instrument(args, function(){
             console.log("\nDone, launching server");
-            require(path.resolve(__dirname, 'server')).start(args);
+            require(path.resolve(__dirname, 'server')).startServer(args);
         });
     },
 
@@ -117,7 +118,7 @@ var commands = {
                 if (f.substr(-3) === '.js') { targetFiles.push(path.resolve(d, f)); }
             }
         });
-	function overwriteThenStartServer(yes) {
+        function overwriteThenStartServer(yes) {
             if (!yes) {
                 return errorExit('Aborted instrumentation, maybe prepare a backup and try again?', 1);
             }
@@ -125,9 +126,9 @@ var commands = {
             require(path.resolve(__dirname, 'instrument')).rewriteTargetFiles(targetFiles, targetPath, args.n || args.hostname, args.p || args.port);
             done && done();
         }
-	if (args.f || args.force) {
-	    return overwriteThenStartServer(true);
-	}
+        if (args.f || args.force) {
+            return overwriteThenStartServer(true);
+        }
         // Ask "are you for seriously?" then add instrumentation
         confirm(dangerMessage(targetFiles, targetPath), overwriteThenStartServer); 
     },
@@ -140,19 +141,23 @@ var commands = {
         } catch (e) {
             errorExit("Error trying to load JSON file.\n"+e, 1);
         }
-        // Quick 'n dirty mkdir -p implementation for output path
-        var outputPath = path.resolve(args._[2]);
+
+        //reports are dumped inside a reports folder under the output path
+        var outputPath = path.resolve(args._[2] + "/reports") ;
+
+        console.log('-- LOG -- Output Path for reports: ' + outputPath);
+
         if (!fs.existsSync(outputPath)) {
-            outputPath.split(path.sep).forEach(function(part, i){
-                var p = outputPath.split(path.sep);
-                p.splice(i);
-                if (!fs.existsSync(path.resolve(p, part))) {
-                    fs.mkdirSync(path.resolve(p, part));
-                }
-            });
+            fs.mkdirSync(outputPath);  //creates a folder 'reports' under the output path specified
         }
+
+        //calls the outputReport() method inside report.js and generates the report file in the output path
         require(path.resolve(__dirname, 'report')).outputReport(results, outputPath);
-        process.exit(0);
+
+        console.log('-- LOG -- Reports Generated. Now launching server');
+
+        //calls the startExpress() method inside server.js to launch a server
+        require(path.resolve(__dirname, 'server')).startReportServer(results, outputPath, 3000);
     },
 
     // I need somebody

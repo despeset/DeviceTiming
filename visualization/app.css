@@ -1,0 +1,96 @@
+* {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-size: 13px;
+      color: #555;
+      background: #f1f1f1;
+    }
+    header {
+      padding: 15px 10px;
+      background-color: #555;
+    }
+    header span {
+      color: #fff;
+      font-size: 16px;
+    }
+    header .menu {
+      float: right;
+    }
+    header .menu li {
+      float: left;
+      margin-right: 20px;
+    }
+    header .menu li:last-child {
+      margin-right: 0px;
+    }
+    header .menu-item {
+      text-decoration: none;
+      color: #fff;
+    }
+    header .menu-item:hover {
+      color: orange;
+    }
+    .main {
+      padding: 20px;
+    }
+    .widget {
+      border-width: 1px;
+      border-style: solid;
+      margin-bottom: 20px;
+      background-color: #f9f9f9;
+      border-color: #d3d3d3;
+    }
+    .widget .widget-header {
+      padding: 0 10px;
+      height: 35px;
+      border-bottom-width: 1px;
+      border-bottom-style: solid;
+      border-bottom-color: #d3d3d3;
+      background-color: #ececec;
+    }
+    .widget .widget-header h3 {
+      display: -moz-inline-stack;
+      display: inline-block;
+      vertical-align: middle;
+      zoom: 1;
+      font-size: 1.1em;
+      margin: 0;
+      line-height: 35px;
+      float: left;
+    }
+    .widget .widget-header .widget-header-toolbar {
+      float: right;
+      width: auto;
+      height: 35px;
+      border-left: 1px solid #ddd;
+      padding-left: 10px;
+      margin-left: 10px;
+    }
+    .btn-borderless {
+      display: inline-block;
+      padding-top: 10px;
+    }
+    .widget .widget-content {
+      padding: 10px 10px;
+    }
+    select {
+      margin-bottom: 20px;
+    }
+    select option {
+      padding: 5px;
+    }
+    label {
+      margin-left: 30px;
+      color: #9a9a9a;
+    }
+
+    /* Chart specific style - overrding default styles */
+    .c3-grid line {
+      stroke: #ddd;
+    }
+    .c3-xgrid, .c3-ygrid {
+      stroke-dasharray: 0;
+    }
