@@ -2,6 +2,8 @@
 
 DeviceTiming is a tool for measuring parse & execution times for JavaScript files. DeviceTiming has server and client components - the server waits for the clients to send timing data, stores it and produces static HTML reports. The client is added to your javascript files individually along with instrumentation to perform the tests. This assumes you have some kind of development or test server running your website's code, which you modify for this purpose and then restore.  **It is a tool built for testing in a controlled environment, use in production considered harmful**.
 
+## Original work by Daniel. Modifications made by Joseph.
+
 ## Installation
 
 Clone the repo and install the dependecies:
