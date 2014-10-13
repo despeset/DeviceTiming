@@ -61,15 +61,15 @@ The instrumentation assumes that the DeviceTiming server can be found at the sam
 ## Running the reports and visualizing the data
 Start the reporting server and provide the ouput path for reports
 
-      ```.sh
-      report /path/to/results.json /path/to/output
-      ```
+```.sh
+report /path/to/results.json /path/to/output
+```
 This dumps the reports (report.html, report.json) and visualization pages inside a "reports" folder under the output path. The reporting server automatically launches the default browser and serves the visualization page at port 3000. The reporting server also responds to the following GET requests (eg. http://localhost:3000/data):
 
-      ```.sh
-      /data     returns the results data as JSON
-      /summary  returns the results data reduced to mean values as JSON
-      ```
+```.sh
+/data     returns the results data as JSON
+/summary  returns the results data reduced to mean values as JSON
+```
 
 ## Methodology
 
