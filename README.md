@@ -4,9 +4,14 @@ DeviceTiming is a tool for measuring parse & execution times for JavaScript file
 
 **This is a forked and modified repo of the original repo maintained at [https://github.com/etsy/DeviceTiming]**
 
-**The original work is done by Daniel Espeset along with Performance and Frontend Infrastructure at Etsy. Some Modifications have been made by me on top of the original tool. See below for the list of modifications**
+**The original work is done by Daniel Espeset along with Performance and Frontend Infrastructure at Etsy. Some Modifications have been made by Joseph on top of the original tool. See below for the list of modifications**
 
 ## Modifications
+   1. Added Charting capabilities for reports generated. Now user can visualize the data in the form of column charts.
+   2. Using Express server. Using seperate server instances for instrumentation and reporting. See server.js and report.js for more info.
+   3. Client and browser detection from the user agent string. The mobile device names cannot be captured as of now. Better detection mechanism will be provided in future.
+   4. All reports by default are generated inside a "reports" folder under the output path specified by user in the report command.
+   5. Once reports and visualization charts are generated the reporting server automatically launches the default browser and serves the visualization page.
 
 ## Installation
 Clone the repo and install the dependecies:
@@ -51,6 +56,15 @@ To run the tests, visit your development server hosting the instrumented code fr
 
 The instrumentation assumes that the DeviceTiming server can be found at the same hostname as the locations you hit in the browser, if you need to use a different hostname for those beacons, use the `--hostname` argument with `devicetiming server`.
 
+## Running the reports and visualizing the data
+Run the report command from command prompt or terminal
+ 
+       report /path/to/results.json /path/to/output
+ This dumps the reports and visualization pages inside a reports folder under the output path. the reporting server automatically launches the default browser and serves the visualization page at port 3000. The reporting server also responds to the following GET requests (eg. http://localhost:3000/data):
+ *
+ *      /data     returns the `results` data as JSON
+ *      /summary  returns the `results` data reduced to mean values as JSON
+
 ## Methodology
 
 The first draft of our tests was done by adding a timer to our primary javascript bundle that started on the first line, and ended on the last. This effectively timed the initial execution time of the js file. However, it left out parsing time. In order to capture both we crafted the `instrument.js` processor for our compiled JavaScripts that performs these steps on each file:
@@ -71,11 +85,13 @@ See slides and resources from [Unpacking the Black Box: Benchmarking JS Parsing 
 
 ## Questions and comments welcome
 
-Open an issue, submit a pull request or tweet at [@danielespeset][twitter] on twitter.
+Open an issue, submit a pull request or tweet at [@danielespeset][twitter1] on twitter - the original source for the tool.
+For any questions or issue with the modifications, please tweet at [@joseph_rialab][twitter2]
 
 ## Credits
-
 Made by Performance and Frontend Infrastructure at Etsy.
 
 [talk]: http://talks.desp.in/unpacking-the-black-box
-[twitter]: http://twitter.com/danielespeset
+[twitter1]: http://twitter.com/danielespeset
+[twitter2]: https://twitter.com/joseph_rialab
+
