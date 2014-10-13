@@ -1,4 +1,12 @@
-* {
+   /**
+   * Basic CSS style rules for visualization page
+   *
+   * TODO: Can be minified by Node before serving
+   *
+   * @author    Joseph Khan <jkhan@yodlee.com>
+   *
+   **/
+    * {
       margin: 0;
       padding: 0;
     }
@@ -85,6 +93,48 @@
     label {
       margin-left: 30px;
       color: #9a9a9a;
+    }
+    #mappingPopUp {
+      position: absolute;
+      width: 50%;
+      right:10px;
+      top: 50px;
+      z-index: 1000;
+      background: #fff;
+      padding: 20px;
+      border: 1px solid #d3d3d3;
+      -webkit-box-shadow: -5px 7px 10px -5px rgba(0,0,0,0.78);
+      -moz-box-shadow: -5px 7px 10px -5px rgba(0,0,0,0.78);
+      box-shadow: -5px 7px 10px -5px rgba(0,0,0,0.78);
+
+      display: none;
+    }
+    #mappingPopUp p {
+      font-size: 16px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #mappingTable {
+      width: 100%;
+      border-collapse: collapse;
+      background: #f1f1f1;
+    }
+    table, td, th {
+      border: 1px solid #000;
+    }
+    #mappingTable td, #mappingTable th {
+      font-size: 14px;
+      border: 1px solid #98bf21;
+      padding: 8;
+    }
+
+    #mappingTable th {
+       font-size: 1em;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        background-color: #A7C942;
+        color: #ffffff;
     }
 
     /* Chart specific style - overrding default styles */

@@ -1,4 +1,9 @@
 /**
+ * @author    Daniel Espeset <desp@etsy.com>
+ * @copyright (c) 2014 Etsy, Inc.
+ * Modified by Joseph Khan <jkhan@yodlee.com> - 11 Oct 2014
+ *
+ *
  * This is the `report` component. Given a set of `results` data as collected by
  * the `server` component it gets the mean values, then generates an HTML
  * document with bars 'n things.
@@ -6,12 +11,13 @@
  * This is done via straight up string iterpolation.
  * TODO: Probably use a templating language instead.
  *
- * @author    Daniel Espeset <desp@etsy.com>
- * @copyright (c) 2014 Etsy, Inc.
+ * Modifications:
+ * 1. Generated report json will have the detected client\browser info set as a property ("detect":value) for each user agents.
+ * 2. Report files are generated automatically (created by node) inside a "reports" folder under the output path provided by user at command level.
+ * 3. Report generation also copies the visualization chart source codes from /lib/visualization folder and dumps it into the "reports" folder
+ * 4. After reports are generated node express server is started at port 3000 that serves the reports folder and launches the default browser automatically to diaplay the visualization page.
  *
- * Modified by Joseph Khan <jkhan@yodlee.com> - 11 Oct 2014
- * Now the report generated will also have the browser-os detecion info
- * See result.json for the format of browser detection
+ * TODO: Rather than serving visualization pages as static path at port 3000, somehow integrate visualization into the response
  **/
 
 var fs      = require('fs'),
@@ -37,7 +43,7 @@ function buildReportData(results) {
         report[UA] = { detect: {}, times: {} };
         for ( var key in results[UA] ) {
             if(key === "device") {
-                report[UA].detect = results[UA][key];
+                report[UA].detect = results[UA][key];  //inserts a detected browser\client name into the results json
             } else {
                 results[UA][key].parse = uniqueSort(results[UA][key].parse);
                 results[UA][key].exec = uniqueSort(results[UA][key].exec);
@@ -128,7 +134,8 @@ function generateHTML(report) {
     return html.join("\n");
 }
 
-// Given results and an outputPath, writes report.json and report.html
+// Given results and an outputPath, writes report.json and report.html inside a "/reports" folder
+// copies the visualization code from /lib/visualization and dumps into "/reports" folder
 function outputReport(results, outputPath) {
     var jsonPath   = path.resolve(outputPath, 'report.json'),
         htmlPath   = path.resolve(outputPath, 'report.html'),
@@ -149,6 +156,7 @@ function outputReport(results, outputPath) {
     });
 }
 
+//recursively traverse a directory and invoke the callback
 function recurseDir(dirpath, callbacks) {
     fs.readdirSync(dirpath).forEach(function(f) {
         if (fs.lstatSync(path.resolve(dirpath, f)).isDirectory()) {
