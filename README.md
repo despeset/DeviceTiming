@@ -2,42 +2,15 @@
 
 DeviceTiming is a tool for measuring parse & execution times for JavaScript files. DeviceTiming has server and client components - the server waits for the clients to send timing data, stores it and produces static HTML reports. The client is added to your javascript files individually along with instrumentation to perform the tests. This assumes you have some kind of development or test server running your website's code, which you modify for this purpose and then restore.  **It is a tool built for testing in a controlled environment, use in production considered harmful**.
 
-## Original work by Daniel. Modifications made by Joseph.
+This is a forked and modified repo of the original repo maintained at [https://github.com/etsy/DeviceTiming]
+
+The original work is done by Daniel Espeset along with Performance and Frontend Infrastructure at Etsy. Modifications made by Joseph.
 
 ## Installation
-
-Clone the repo and install the dependecies:
-
-```.sh
-git clone https://github.com/etsy/DeviceTiming.git
-cd DeviceTiming
-npm install
-```
+See the original repo
 
 ## Setup the test
-
-Note that DeviceTiming **will modify your javascript files - it is not reccomended that you use this tool without having a backup of your code**.
-
-So first, backup your code:
-
-```.sh
-cp /path/to/your/js /path/to/your/js-unmodified
-```
-
-Then start the DeviceTiming server and provide a path to the javascript you wish to test.
-
-```.sh
-./devicetiming server /path/to/your/js
-```
-This will first recursively instrument all the code in the path provided.
-Then it will start listening at port 8537 for beacons from the client code.
-You can provide a differnt port with `-p`, see `devicetiming -h` for more.
-
-When you're done you can restore your backed up copy:
-
-```.sh
-cp /path/to/your/js-unmodified /path/to/your/js
-```
+See the original repo
 
 ### More Options
 
