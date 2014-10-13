@@ -12,6 +12,8 @@ DeviceTiming is a tool for measuring parse & execution times for JavaScript file
    3. Client and browser detection from the user agent string. The mobile device names cannot be captured as of now. Better detection mechanism will be provided in future.
    4. All reports by default are generated inside a "reports" folder under the output path specified by user in the report command.
    5. Once reports and visualization charts are generated the reporting server automatically launches the default browser and serves the visualization page.
+   
+To start reporting server and visualize charts see **Running the reports and visualizing the data** section.
 
 ## Installation
 Clone the repo and install the dependecies:
@@ -57,13 +59,17 @@ To run the tests, visit your development server hosting the instrumented code fr
 The instrumentation assumes that the DeviceTiming server can be found at the same hostname as the locations you hit in the browser, if you need to use a different hostname for those beacons, use the `--hostname` argument with `devicetiming server`.
 
 ## Running the reports and visualizing the data
-Run the report command from command prompt or terminal
- 
-       report /path/to/results.json /path/to/output
- This dumps the reports and visualization pages inside a reports folder under the output path. the reporting server automatically launches the default browser and serves the visualization page at port 3000. The reporting server also responds to the following GET requests (eg. http://localhost:3000/data):
- *
- *      /data     returns the `results` data as JSON
- *      /summary  returns the `results` data reduced to mean values as JSON
+Start the reporting server and provide the ouput path for reports
+
+      ```.sh
+      report /path/to/results.json /path/to/output
+      ```
+This dumps the reports (report.html, report.json) and visualization pages inside a "reports" folder under the output path. The reporting server automatically launches the default browser and serves the visualization page at port 3000. The reporting server also responds to the following GET requests (eg. http://localhost:3000/data):
+
+      ```.sh
+      /data     returns the results data as JSON
+      /summary  returns the results data reduced to mean values as JSON
+      ```
 
 ## Methodology
 
