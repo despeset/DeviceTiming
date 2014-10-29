@@ -46,7 +46,7 @@ function buildReportData(results) {
 function generateHTML(report) {
 
     var html =
-    [ "<!DOCTYPE html",
+    [ "<!DOCTYPE html>",
       "<html>",
       "<head>",
         "<style>",
