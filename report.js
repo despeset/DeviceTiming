@@ -1,4 +1,9 @@
 /**
+ * @author    Daniel Espeset <desp@etsy.com>
+ * @copyright (c) 2014 Etsy, Inc.
+ * Modified by Joseph Khan <jkhan@yodlee.com> - 11 Oct 2014
+ *
+ *
  * This is the `report` component. Given a set of `results` data as collected by
  * the `server` component it gets the mean values, then generates an HTML
  * document with bars 'n things.
@@ -6,12 +11,18 @@
  * This is done via straight up string iterpolation.
  * TODO: Probably use a templating language instead.
  *
- * @author    Daniel Espeset <desp@etsy.com>
- * @copyright (c) 2014 Etsy, Inc.
+ * Modifications:
+ * 1. Generated report json will have the detected client\browser info set as a property ("detect":value) for each user agents.
+ * 2. Report files are generated automatically (created by node) inside a "reports" folder under the output path provided by user at command level.
+ * 3. Report generation also copies the visualization chart source codes from /lib/visualization folder and dumps it into the "reports" folder
+ * 4. After reports are generated node express server is started at port 3000 that serves the reports folder and launches the default browser automatically to diaplay the visualization page.
+ *
+ * TODO: Rather than serving visualization pages as static path at port 3000, somehow integrate visualization into the response
  **/
 
 var fs      = require('fs'),
     path    = require('path');
+
 
 function uniqueSort(arr){
     return arr.reverse()
@@ -29,13 +40,17 @@ function uniqueSort(arr){
 function buildReportData(results) {
     var report = {};
     for ( var UA in results ) {
-        report[UA] = { times: {} };
-        for ( var js in results[UA] ) {
-            results[UA][js].parse = uniqueSort(results[UA][js].parse);
-            results[UA][js].exec = uniqueSort(results[UA][js].exec);
-            report[UA].times[js] = {
-                parse: results[UA][js].parse[Math.floor(results[UA][js].parse.length/2)],
-                exec:  results[UA][js].exec[Math.floor(results[UA][js].exec.length/2)]
+        report[UA] = { detect: {}, times: {} };
+        for ( var key in results[UA] ) {
+            if(key === "device") {
+                report[UA].detect = results[UA][key];  //inserts a detected browser\client name into the results json
+            } else {
+                results[UA][key].parse = uniqueSort(results[UA][key].parse);
+                results[UA][key].exec = uniqueSort(results[UA][key].exec);
+                report[UA].times[key] = {
+                    parse: results[UA][key].parse[Math.floor(results[UA][key].parse.length/2)],
+                    exec:  results[UA][key].exec[Math.floor(results[UA][key].exec.length/2)]
+                }
             }
         }
     }
@@ -119,7 +134,8 @@ function generateHTML(report) {
     return html.join("\n");
 }
 
-// Given results and an outputPath, writes report.json and report.html
+// Given results and an outputPath, writes report.json and report.html inside a "/reports" folder
+// copies the visualization code from /lib/visualization and dumps into "/reports" folder
 function outputReport(results, outputPath) {
     var jsonPath   = path.resolve(outputPath, 'report.json'),
         htmlPath   = path.resolve(outputPath, 'report.html'),
@@ -128,6 +144,27 @@ function outputReport(results, outputPath) {
 
     fs.writeFileSync(jsonPath, JSON.stringify(report, null, '    '), 'utf8');
     fs.writeFileSync(htmlPath, html, 'utf8');
+
+    //path for visualization folder
+    var vPath = path.resolve(__dirname, 'lib', 'visualization');
+    // Recursively traverse dirpath, copy each file to reports folder
+    recurseDir(vPath, {
+            file: function(d, f) {  //d - directory, f - file
+                //copy each file into reports directory
+                fs.writeFileSync(path.resolve(outputPath + '/' + f), fs.readFileSync(d + '/' + f), 'utf8');  //targetFile, sourceFile, encoding
+            }
+    });
+}
+
+//recursively traverse a directory and invoke the callback
+function recurseDir(dirpath, callbacks) {
+    fs.readdirSync(dirpath).forEach(function(f) {
+        if (fs.lstatSync(path.resolve(dirpath, f)).isDirectory()) {
+            callbacks.dir && callbacks.dir(dirpath, f);
+            return recurseDir(path.resolve(dirpath, f), callbacks);
+        }
+        callbacks.file && callbacks.file(dirpath, f);
+    });
 }
 
 module.exports = {

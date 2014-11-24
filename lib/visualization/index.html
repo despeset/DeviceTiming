@@ -1,0 +1,75 @@
+<!--
+	Visualization Page HTML
+	@author    Joseph Khan <jkhan@yodlee.com>
+
+	TODO: Can be minified by Node before serving.
+-->
+<!DOCTYPE html
+<html>
+<head>
+	<title>Visualization Page for Internal Report</title>
+	<link rel="stylesheet" type="text/css" href="c3.css">
+	<link rel="stylesheet" type="text/css" href="app.css">
+</head>
+	<body class="dashboard">
+		<header>
+			<span>DeviceTiming - Visualization Dashboard for Report</span>
+			<ul class="menu">
+				<li>
+					<a class="menu-item" href="#" id="mappingLink">User Agent - Browser mapping</a>
+				</li>
+				<li>
+					<a class="menu-item" href="/report.html">Plain HTML Report</a>
+				</li>
+				<li>
+					<a class="menu-item" href="https://github.com/etsy/DeviceTiming" target="_blank">Github repo</a>
+				</li>
+			</ul>>
+		</header>
+
+		<div class="main">
+			<div class="widget">
+				<div class="widget-header">
+					<h3>Parsing and Execution time for a JavaScript file</h3>
+					<div class="btn-group widget-header-toolbar">
+						<a href="#" title="Expand/Collapse" class="btn-borderless btn-toggle-expand"><img src="up.svg" width="15"/></a>
+					</div>
+				</div><div class="widget-content">
+					<label for="">Select a JavaScript file : </label>
+					<select id="scriptFileList"></select>
+					<div id="combo_chart"></div>
+				</div>
+			</div>
+
+			<div class="widget">
+				<div class="widget-header">
+					<h3>Parsing and Execution times for a Browser</h3>
+					<div class="btn-group widget-header-toolbar">
+						<a href="#" title="Expand/Collapse" class="btn-borderless btn-toggle-expand"><img src="up.svg" width="15"/></a>
+					</div>
+				</div><div class="widget-content">
+					<label for="">Select a Browser name : </label>
+					<select id="browserList"></select>
+					<div id="another_chart"></div>
+				</div>
+			</div>
+		</div>
+
+		<div id="mappingPopUp">
+			<p>User agent string to its corresponding detected client | browser mapping</p>
+			<table id="mappingTable">
+				<thead>
+					<tr>
+						<th>Detected Client</th>
+						<th>User Agent String</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+
+	    <script type="text/javascript" src="d3.min.js"></script>
+	    <script type="text/javascript" src="c3.min.js"></script>
+	    <script type="text/javascript" src="app.js"></script>
+	</body>
+</html>
