@@ -129,7 +129,7 @@ var commands = {
 	    return overwriteThenStartServer(true);
 	}
         // Ask "are you for seriously?" then add instrumentation
-        confirm(dangerMessage(targetFiles, targetPath), overwriteThenStartServer); 
+        confirm(dangerMessage(targetFiles, targetPath), overwriteThenStartServer);
     },
 
     // Generate a static report from a results.json file
@@ -146,6 +146,7 @@ var commands = {
             outputPath.split(path.sep).forEach(function(part, i){
                 var p = outputPath.split(path.sep);
                 p.splice(i);
+                p = p.join(path.sep);
                 if (!fs.existsSync(path.resolve(p, part))) {
                     fs.mkdirSync(path.resolve(p, part));
                 }
