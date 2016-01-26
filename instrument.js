@@ -39,7 +39,7 @@ function rewriteTargetFiles(targetFiles, targetPath, hostname, port) {
     function render(str, filename) {
         return str.replace(/%%NAME%%/g, filename.substr(targetPath.length))
                   .replace(/%%MAIN%%/g, filename.replace(/[^a-zA-Z_]/g,''))
-                  .replace(/%%DEVICE_TIMING_SERVER_ADDR%%/g, (hostname || process.env.HOSTNAME) + ':' + (port || '8537'));
+                  .replace(/%%DEVICE_TIMING_SERVER_ADDR%%/g, (hostname || process.env.HOSTNAME || 'localhost') + ':' + (port || '8537'));
     }
 }
 
