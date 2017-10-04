@@ -92,7 +92,9 @@ function start(opts) {
     http.createServer(function(req, res) {
         // CORS headers, allow everything
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader("Access-Control-Allow-Headers", req.headers["Access-Control-Request-Headers"]);
+        if (req.headers["Access-Control-Request-Headers"]) {
+            res.setHeader("Access-Control-Allow-Headers", req.headers["Access-Control-Request-Headers"]);
+        }
         if (req.method === 'POST') {
             handlePost(req, res);
         } else {
